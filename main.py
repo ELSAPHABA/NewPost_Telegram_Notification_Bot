@@ -101,3 +101,8 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("프로그램 종료")
         manager.updater.stop()
+
+# 주의사항: python-telegram-bot 라이브러리의 v20 이상에서는 Updater와 Dispatcher 등의 API 구조가 크게 변경되었습니다.
+# v20 이후에는 Updater(token=...)가 아닌 Application.builder().token(...).build() 방식으로 봇을 생성해야 합니다.
+# 라이브러리 다운그레이드: pip install python-telegram-bot==13.15
+# 정적 컴파일 명령어: pyinstaller --onefile --hidden-import=bs4 --hidden-import=python-telegram-bot==13.15 --add-data "user-agents.txt:." main.py
