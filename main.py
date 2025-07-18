@@ -87,8 +87,8 @@ class WatcherManager:
 
 # ========== main 실행 부분 ==========
 if __name__ == "__main__":
-    BOT_TOKEN = '텔레그램봇토큰'     # <- 본인 값으로 수정
-    CHAT_ID = 123456789             # <- 본인(혹은 그룹) chat_id로 수정
+    BOT_TOKEN = '7049762468:AAGo32N485eDBpgMuIRNhS9XUgC6Ydtk8bA'     # <- 본인 값으로 수정
+    CHAT_ID = 5002639138             # <- 본인(혹은 그룹) chat_id로 수정
 
     ua_mgr = UserAgentManager('user-agents.txt')  # 혹은 user-agents.csv
     watchers = [MiniPCWatcher(), SFFWatcher()]
