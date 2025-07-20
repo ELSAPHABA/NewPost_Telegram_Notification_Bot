@@ -25,5 +25,5 @@ class SiteWatcher:
             return title, link
         return None, None
 
-    def send_telegram(self, bot, chat_id, text, link):
-        bot.send_message(chat_id=chat_id, text=f"[{self.name}] 새 글: {text}\n{link}")
+    async def send_telegram(self, bot, chat_id, text, link):
+        await bot.send_message(chat_id=chat_id, text=f"[{self.name}] 새 글: {text}\n{link}")
