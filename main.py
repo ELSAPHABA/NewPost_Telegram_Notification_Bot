@@ -94,3 +94,9 @@ if __name__ == "__main__":
 
     print("봇 및 크롤링 시작됨.")
     application.run_polling()
+
+    # 주의사항
+    # python-telegram-bot 20.x/21.x는 apscheduler 3.9.x에 가장 잘 맞으며, apscheduler 3.x는 pytz만 완벽 지원합니다.
+    # pip install apscheduler==3.9.1.post1
+    # pip install pytz
+    # pip install python-telegram-bot==20.7
