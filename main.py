@@ -3,6 +3,7 @@
 import asyncio
 from MiniPCWatcher import MiniPCWatcher
 from SFFWatcher import SFFWatcher
+from TwoCPUWatcher import TwoCPUWatcher
 from user_agents import UserAgentManager
 
 from telegram.ext import (
@@ -82,7 +83,7 @@ if __name__ == "__main__":
     CHAT_ID = 5002639138
 
     ua_mgr = UserAgentManager('user-agents.txt')
-    watchers = [MiniPCWatcher(), SFFWatcher()]
+    watchers = [MiniPCWatcher(), SFFWatcher(), TwoCPUWatcher()]
     manager = WatcherManager(watchers, CHAT_ID, ua_mgr)
 
     application = Application.builder().token(BOT_TOKEN).build()
