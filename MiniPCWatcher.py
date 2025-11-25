@@ -12,9 +12,8 @@ class MiniPCWatcher(SiteWatcher):
     def get_latest_post(self, headers=None):
         html = self.fetch_page(headers=headers)
         soup = BeautifulSoup(html, 'html.parser')
-        tr = soup.select_one(
-            '#container > section.left_content > article:nth-child(3) > div.gall_listwrap.list > table > tbody > tr:nth-child(3)'
-        )
+        # 광고/공지를 건너뛰고 실제 게시글(us-post) 중 첫 번째를 선택
+        tr = soup.select_one('.gall_listwrap.list table tbody tr.us-post')
         if not tr:
             raise Exception('MiniPC: 새글 tr을 찾을 수 없습니다.')
         post_id = tr.get('data-no')
