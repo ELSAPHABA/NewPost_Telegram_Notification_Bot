@@ -4,6 +4,7 @@ import asyncio
 import json
 import logging
 import os
+import sys
 
 from telegram import Update
 from telegram.ext import (
@@ -139,6 +140,11 @@ class WatcherManager:
             await update.message.reply_text("새 글 알림 구독을 시작합니다. 새 글이 올라올 때마다 알려드리겠습니다.")
         else:
             await update.message.reply_text("이미 새 글 알림을 구독하고 있습니다.")
+
+    async def restart(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        await update.message.reply_text("봇을 재시작합니다...")
+        logging.info("관리자 요청으로 봇을 재시작합니다.")
+        os.execl(sys.executable, sys.executable, *sys.argv)
 
 async def register_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:

@@ -40,6 +40,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler('setuainterval', manager.set_ua_interval))
     application.add_handler(CommandHandler('uainterval', manager.show_ua_interval))
     application.add_handler(CommandHandler('help', manager.help_command))
+    application.add_handler(CommandHandler('restart', manager.restart))
 
     logging.info("봇 및 크롤링 시작됨.")
     application.run_polling()

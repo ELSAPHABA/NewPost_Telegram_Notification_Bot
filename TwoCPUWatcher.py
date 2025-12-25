@@ -66,11 +66,13 @@ class TwoCPUWatcher(SiteWatcher):
 
         return post_id, title, link
 
-# 참고사항
-# 개발자 모드에서는 tbody 있음. HTML 파일에서는 tbody 없이 <tr class="is_notice">.
-# HTML에 tbody가 없으면 브라우저가 자동 생성해서 보여주기도 함.
-# 하지만, requests로 가져온 HTML에는 tbody가 없을 수 있음.
-# BeautifulSoup이나 lxml도 HTML 파서를 쓸 때 tbody가 명시적으로 없으면, 자동으로 넣어주기도 하지만, 파싱 옵션이나 사이트의 미세구조에 따라 
-# tbody 없이 바로 table > tr로 잡힐 수도 있음.
-# 항상 table > tr (또는 table > tbody > tr) 둘 다 대응하는 코드를 쓸 것.
-# 실제 페이지에는 tbody가 없으므로, tbody 없이 <tr>로 검색하도록 수정.
+'''
+참고사항
+개발자 모드에서는 tbody 있음. HTML 파일에서는 tbody 없이 <tr class="is_notice">.
+HTML에 tbody가 없으면 브라우저가 자동 생성해서 보여주기도 함.
+하지만, requests로 가져온 HTML에는 tbody가 없을 수 있음.
+BeautifulSoup이나 lxml도 HTML 파서를 쓸 때 tbody가 명시적으로 없으면, 자동으로 넣어주기도 하지만, 파싱 옵션이나 사이트의 미세구조에 따라 
+tbody 없이 바로 table > tr로 잡힐 수도 있음.
+항상 table > tr (또는 table > tbody > tr) 둘 다 대응하는 코드를 쓸 것.
+실제 페이지에는 tbody가 없으므로, tbody 없이 <tr>로 검색하도록 수정.
+'''
