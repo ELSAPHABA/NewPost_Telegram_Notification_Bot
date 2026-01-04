@@ -7,7 +7,7 @@ class SFFWatcher(SiteWatcher):
     def __init__(self):
         super().__init__()
         self.name = "SFF"
-        self.url = "https://gall.dcinside.com/mgallery/board/lists/?id=sff&sort_type=N&search_head=100&page=1"
+        self.url = "https://gall.dcinside.com/mgallery/board/lists/?id=sff&sort_type=N&search_head=160&page=1"
 
     def get_latest_post(self, headers=None):
         html = self.fetch_page(headers=headers)
