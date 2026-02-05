@@ -24,8 +24,8 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/yourusername/telegram-notification-bot"
-"Bug Tracker" = "https://github.com/yourusername/telegram-notification-bot/issues"
+"Homepage" = "https://github.com/ELSAPHABA/NewPost_Telegram_Notification_Bot"
+"Bug Tracker" = "https://github.com/ELSAPHABA/NewPost_Telegram_Notification_Bot/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
