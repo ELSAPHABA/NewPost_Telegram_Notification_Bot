@@ -20,7 +20,7 @@ if __name__ == "__main__":
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
 
-    BOT_TOKEN = '7049762468:AAGo32N485eDBpgMuIRNhS9XUgC6Ydtk8bA'
+    BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
     chat_id_mgr = ChatIdManager('chat_ids.json')
     ua_mgr = UserAgentManager('user-agents.txt')

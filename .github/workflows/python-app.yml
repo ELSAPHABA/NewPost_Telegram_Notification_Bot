@@ -1,0 +1,33 @@
+name: Deploy Python App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/elsaphaba/HongDev/NewPost_Telegram_Notification_Bot
+            
+            # 최신 코드 가져오기
+            git pull origin main
+
+            # .env 파일 생성 (토큰 주입)
+            echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" > .env
+
+            # 가상환경 패키지 설치 (pyproject.toml)
+            source /home/elsaphaba/HongDev/HongDevVenv/bin/activate
+            pip install .
+
+            # 서비스 재시작
+            sudo systemctl restart NewPost_Telegram_Notification_Bot
