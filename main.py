@@ -6,6 +6,10 @@ from SFFWatcher import SFFWatcher
 from TwoCPUWatcher import TwoCPUWatcher
 from user_agents import UserAgentManager
 from Telegram_bot import ChatIdManager, WatcherManager, register_user
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from telegram.ext import (
     Application,
