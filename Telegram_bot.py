@@ -130,6 +130,7 @@ class WatcherManager:
             "/interval : 현재 확인 주기(초) 표시\n"
             "/setuainterval [횟수] : User-Agent 세탁 주기 변경\n"
             "/uainterval : 현재 User-Agent 세탁 주기(횟수) 표시\n"
+            "/restart : 봇 재시작\n"
             "/help : 도움말 보기"
         )
         await update.message.reply_text(msg)
