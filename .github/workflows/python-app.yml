@@ -17,6 +17,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            # 파일 직접 실행
             cd /home/elsaphaba/HongDev/NewPost_Telegram_Notification_Bot
             
             # 최신 코드 가져오기
@@ -31,3 +32,13 @@ jobs:
 
             # 서비스 재시작
             sudo systemctl restart NewPost_Telegram_Notification_Bot
+
+            # Docker 배포
+            # docker build -t telegram-notification-bot .
+            # docker rm -f telegram-notification-bot || true
+            # docker run -d \
+            #   --name telegram-notification-bot \
+            #   --restart unless-stopped \
+            #   --env-file .env \
+            #   -v telegram-notification-bot-data:/data \
+            #   telegram-notification-bot
