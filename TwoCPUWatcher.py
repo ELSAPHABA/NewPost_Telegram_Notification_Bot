@@ -3,7 +3,6 @@
 from bs4 import BeautifulSoup
 from SiteWatcher import SiteWatcher
 from urllib.parse import urljoin
-import requests
 
 class TwoCPUWatcher(SiteWatcher):
     def __init__(self):
@@ -20,9 +19,7 @@ class TwoCPUWatcher(SiteWatcher):
         requests를 사용하여 웹 페이지의 HTML을 가져옵니다.
         2cpu 사이트의 EUC-KR 인코딩에 맞게 처리하도록 부모 클래스의 메서드를 오버라이드합니다.
         """
-        headers = headers or {'User-Agent': 'Mozilla/5.0'}
-        response = requests.get(self.url, headers=headers)
-        response.raise_for_status()
+        response = self.fetch_response(headers=headers)
         # EUC-KR로 인코딩을 명시적으로 설정합니다.
         response.encoding = 'euc-kr'
         return response.text
