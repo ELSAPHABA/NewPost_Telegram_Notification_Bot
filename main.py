@@ -2,7 +2,9 @@
 
 import logging
 from MiniPCWatcher import MiniPCWatcher
+from SBNordVPNWatcher import SBNordVPNWatcher
 from SFFWatcher import SFFWatcher
+from SBSurfsharkWatcher import SBSurfsharkWatcher
 from TwoCPUWatcher import TwoCPUWatcher
 from user_agents import UserAgentManager
 from Telegram_bot import ChatIdManager, WatcherManager, register_user
@@ -28,7 +30,13 @@ if __name__ == "__main__":
 
     chat_id_mgr = ChatIdManager('chat_ids.json')
     ua_mgr = UserAgentManager('user-agents.txt')
-    watchers = [MiniPCWatcher(), SFFWatcher(), TwoCPUWatcher()]
+    watchers = [
+        MiniPCWatcher(),
+        SFFWatcher(),
+        TwoCPUWatcher(),
+        SBNordVPNWatcher(),
+        SBSurfsharkWatcher(),
+    ]
     manager = WatcherManager(watchers, chat_id_mgr, ua_mgr)
 
     application = Application.builder().token(BOT_TOKEN).build()

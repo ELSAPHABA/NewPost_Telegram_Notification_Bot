@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "NewPost_Telegram_Notification_Bot"
 version = "0.1.0"
-description = "A Telegram bot that monitors websites for new posts and sends notifications. Supports DCInside MiniPC, SFF Gallery, 2CPU."
+description = "A Telegram bot that monitors websites and sends notifications. Supports DCInside MiniPC, SFF Gallery, 2CPU, and ShopBack alerts."
 authors = [
   { name = "ELSAPHABA", email = "sb07907@naver.com" },
 ]
