@@ -17,7 +17,7 @@ jobs:
           username: ${{ secrets.RPI3_SERVER_USER }}
           key: ${{ secrets.RPI3_SSH_PRIVATE_KEY }}
           script: |
-            # 파일 직접 실행
+            # 작업 디렉토리로 이동
             cd /home/elsaphaba/HongDev/NewPost_Telegram_Notification_Bot
             
             # 최신 코드 가져오기
@@ -26,6 +26,10 @@ jobs:
             # .env 파일 생성 (토큰 주입)
             echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" > .env
 
+            # =========================
+            # 파일 직접 실행
+            # =========================
+
             # 가상환경 패키지 설치 (pyproject.toml)
             source /home/elsaphaba/HongDev/HongDevVenv/bin/activate
             pip install .
@@ -33,9 +37,17 @@ jobs:
             # 서비스 재시작
             sudo systemctl restart NewPost_Telegram_Notification_Bot
 
+            # =========================
             # Docker 배포
+            # =========================
+
+            # Docker 이미지 빌드
             # docker build -t telegram-notification-bot .
+            
+            # 기존 컨테이너 제거 (존재하는 경우)
             # docker rm -f telegram-notification-bot || true
+            
+            # 컨테이너 생성 및 실행
             # docker run -d \
             #   --name telegram-notification-bot \
             #   --restart unless-stopped \
