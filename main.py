@@ -5,6 +5,7 @@ from MiniPCWatcher import MiniPCWatcher
 from SBNordVPNWatcher import SBNordVPNWatcher
 from SFFWatcher import SFFWatcher
 from SBSurfsharkWatcher import SBSurfsharkWatcher
+from SSAdguardWatcher import SSAdguardWatcher
 from TwoCPUWatcher import TwoCPUWatcher
 from user_agents import UserAgentManager
 from Telegram_bot import ChatIdManager, WatcherManager, register_user
@@ -36,6 +37,7 @@ if __name__ == "__main__":
         TwoCPUWatcher(),
         SBNordVPNWatcher(),
         SBSurfsharkWatcher(),
+        SSAdguardWatcher(),
     ]
     manager = WatcherManager(watchers, chat_id_mgr, ua_mgr)
 
