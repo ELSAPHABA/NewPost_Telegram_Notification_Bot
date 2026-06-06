@@ -27,6 +27,7 @@ class SBNordVPNWatcher(SiteWatcher):
         super().__init__()
         self.name = "ShopBack NordVPN"
         self.url = "https://www.shopback.co.kr/nordvpn"
+        self._alert_condition_met = False
 
     def get_latest_post(self, headers=None):
         cashback_text = self._fetch_cashback_text(headers=headers)
@@ -37,16 +38,19 @@ class SBNordVPNWatcher(SiteWatcher):
     def check_new_post_with_headers(self, headers):
         post_id, title, link = self.get_latest_post(headers=headers)
         cashback_percent = Decimal(post_id) / 100
+        condition_met = cashback_percent >= self.ALERT_THRESHOLD
 
-        if cashback_percent < self.ALERT_THRESHOLD:
+        if not condition_met:
+            self._alert_condition_met = False
             self.last_post_id = None
             return None, None
 
-        if self.last_post_id != post_id:
-            self.last_post_id = post_id
-            return title, link
+        if self._alert_condition_met:
+            return None, None
 
-        return None, None
+        self._alert_condition_met = True
+        self.last_post_id = post_id
+        return title, link
 
     async def send_telegram(self, bot, chat_id, text, link):
         await bot.send_message(

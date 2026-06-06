@@ -19,6 +19,7 @@ class SSAdguardWatcher(SiteWatcher):
         super().__init__()
         self.name = "StackSocial AdGuard"
         self.url = "https://www.stacksocial.com/sales/adguard-family-plan-lifetime-subscription"
+        self._alert_condition_met = False
 
     def get_latest_post(self, headers=None):
         price_text = self._fetch_price_text(headers=headers)
@@ -29,16 +30,19 @@ class SSAdguardWatcher(SiteWatcher):
     def check_new_post_with_headers(self, headers):
         post_id, title, link = self.get_latest_post(headers=headers)
         price = Decimal(post_id) / 100
+        condition_met = price < self.ALERT_THRESHOLD
 
-        if int(price) >= self.ALERT_THRESHOLD:
+        if not condition_met:
+            self._alert_condition_met = False
             self.last_post_id = None
             return None, None
 
-        if self.last_post_id != post_id:
-            self.last_post_id = post_id
-            return title, link
+        if self._alert_condition_met:
+            return None, None
 
-        return None, None
+        self._alert_condition_met = True
+        self.last_post_id = post_id
+        return title, link
 
     async def send_telegram(self, bot, chat_id, text, link):
         await bot.send_message(
