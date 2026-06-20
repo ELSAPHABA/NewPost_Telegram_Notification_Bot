@@ -1,14 +1,19 @@
 #!/bin/sh
 set -eu
 
-mkdir -p /data
+: "${DATA_DIR:=/data}"
+: "${CHAT_IDS_FILE:=${DATA_DIR}/chat_ids.json}"
 
-if [ ! -e /app/chat_ids.json ]; then
-    ln -s /data/chat_ids.json /app/chat_ids.json
+export DATA_DIR CHAT_IDS_FILE
+
+mkdir -p "$DATA_DIR" "$(dirname "$CHAT_IDS_FILE")"
+
+if [ ! -f "$CHAT_IDS_FILE" ]; then
+    printf '[]\n' > "$CHAT_IDS_FILE"
 fi
 
-if [ ! -f /data/chat_ids.json ]; then
-    printf '[]\n' > /data/chat_ids.json
+if [ ! -e /app/chat_ids.json ]; then
+    ln -s "$CHAT_IDS_FILE" /app/chat_ids.json
 fi
 
 exec "$@"

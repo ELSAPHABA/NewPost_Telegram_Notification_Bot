@@ -1,7 +1,9 @@
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    DATA_DIR=/data \
+    CHAT_IDS_FILE=/data/chat_ids.json
 
 WORKDIR /app
 

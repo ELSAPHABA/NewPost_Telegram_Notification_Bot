@@ -59,14 +59,46 @@ class WatcherManager:
         self.chat_id_manager = chat_id_manager
         self.interval = 30
         self.user_agent_manager = user_agent_manager
+        self.worker_count = 3
+        self._check_lock = asyncio.Lock()
 
     async def check_watchers(self, context: ContextTypes.DEFAULT_TYPE):
+        if self._check_lock.locked():
+            logging.warning("이전 새 글 확인 작업이 아직 진행 중이라 이번 실행을 건너뜁니다.")
+            return
+
+        async with self._check_lock:
+            await self._check_watchers(context)
+
+    async def _check_watchers(self, context: ContextTypes.DEFAULT_TYPE):
         bot = context.bot
+        semaphore = asyncio.Semaphore(self.worker_count)
+        jobs = []
+
         for watcher in self.watchers:
+            watcher.interval = self.interval
+            headers = {'User-Agent': self.user_agent_manager.get_user_agent()}
+            jobs.append((watcher, headers))
+
+        async def check_one(watcher, headers):
             try:
-                watcher.interval = self.interval
-                headers = {'User-Agent': self.user_agent_manager.get_user_agent()}
-                title, link = watcher.check_new_post_with_headers(headers)
+                async with semaphore:
+                    check_result = await asyncio.to_thread(watcher.check_new_post_with_headers, headers)
+                return watcher, check_result, None
+            except Exception as e:
+                return watcher, None, e
+
+        results = await asyncio.gather(
+            *(check_one(watcher, headers) for watcher, headers in jobs),
+        )
+
+        for watcher, check_result, error in results:
+            if error:
+                logging.error(f"{watcher.name} 크롤링 에러: {error}")
+                continue
+
+            try:
+                title, link = check_result
                 if title:
                     ids_to_remove = []
                     for chat_id in self.chat_id_manager.get_ids():
