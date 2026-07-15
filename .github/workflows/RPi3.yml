@@ -24,9 +24,16 @@ jobs:
 
             # 작업 디렉토리로 이동
             cd /home/elsaphaba/HongDev/NewPost_Telegram_Notification_Bot
-            
+
             # 최신 코드 가져오기
-            git pull origin main
+            # git pull origin main
+
+            # 원격 저장소로 강제 덮어쓰기 (로컬 무시)
+            git fetch --all
+            git reset --hard origin/main
+
+            # 추적되지 않는 파일 모두 삭제
+            # git clean -f -d
 
             # .env 파일 생성 (토큰 주입)
             echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" > .env
@@ -53,10 +60,10 @@ jobs:
 
             # Docker 이미지 빌드
             docker build -t "$IMAGE_NAME" .
-            
+
             # 기존 컨테이너 제거 (존재하는 경우)
             docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
-            
+
             # 컨테이너 생성 및 실행
             docker run -d \
               --name "$CONTAINER_NAME" \
