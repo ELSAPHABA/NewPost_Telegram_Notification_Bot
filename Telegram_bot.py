@@ -54,12 +54,12 @@ class ChatIdManager:
         return list(self.chat_ids)
 
 class WatcherManager:
-    def __init__(self, watchers, chat_id_manager, user_agent_manager):
+    def __init__(self, watchers, chat_id_manager, user_agent_manager, worker_count=3):
         self.watchers = watchers
         self.chat_id_manager = chat_id_manager
         self.interval = 30
         self.user_agent_manager = user_agent_manager
-        self.worker_count = 3
+        self.worker_count = worker_count
         self._check_lock = asyncio.Lock()
 
     async def check_watchers(self, context: ContextTypes.DEFAULT_TYPE):

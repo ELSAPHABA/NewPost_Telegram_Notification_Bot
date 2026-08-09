@@ -3,6 +3,8 @@
 import requests
 import time
 
+from config import get_proxy_manager
+
 class SiteWatcher:
     def __init__(self):
         self.name = None
@@ -24,7 +26,12 @@ class SiteWatcher:
                 raise TimeoutError(f"{self.name}: 스크래핑 제한 시간을 초과했습니다.")
             request_timeout = min(request_timeout, remaining)
 
-        response = requests.get(self.url, headers=headers, timeout=request_timeout)
+        response = requests.get(
+            self.url,
+            headers=headers,
+            timeout=request_timeout,
+            proxies=get_proxy_manager().requests_proxies(),
+        )
         response.raise_for_status()
         if self.source_load_delay > 0:
             delay = self.source_load_delay
@@ -75,9 +82,3 @@ class SiteWatcher:
     async def send_telegram(self, bot, chat_id, text, link):
         await bot.send_message(chat_id=chat_id, text=f"[{self.name}] 새 글: {text}\n{link}")
 
-'''
-TODO
-- Requests의 proxies 옵션 활용해 프록시 서버를 통한 요청으로 IP 차단 방지
-    - USER, PASS, HOST[1]~HOST[12], PORT는 .env 관리
-    - HOST는 15분마다 교체
-'''

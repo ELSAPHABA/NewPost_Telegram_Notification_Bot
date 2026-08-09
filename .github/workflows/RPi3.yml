@@ -35,8 +35,26 @@ jobs:
             # 추적되지 않는 파일 모두 삭제
             # git clean -f -d
 
-            # .env 파일 생성 (토큰 주입)
-            echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" > .env
+            # .env 파일 생성 (토큰 및 프록시 설정 주입)
+            cat > .env <<'EOF'
+            TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
+            PROXY_ENABLED=${{ vars.PROXY_ENABLED || 'true' }}
+            PROXY_USER=${{ secrets.PROXY_USER }}
+            PROXY_PASS=${{ secrets.PROXY_PASS }}
+            PROXY_HOST_1=${{ secrets.PROXY_HOST_1 }}
+            PROXY_HOST_2=${{ secrets.PROXY_HOST_2 }}
+            PROXY_HOST_3=${{ secrets.PROXY_HOST_3 }}
+            PROXY_HOST_4=${{ secrets.PROXY_HOST_4 }}
+            PROXY_HOST_5=${{ secrets.PROXY_HOST_5 }}
+            PROXY_HOST_6=${{ secrets.PROXY_HOST_6 }}
+            PROXY_HOST_7=${{ secrets.PROXY_HOST_7 }}
+            PROXY_HOST_8=${{ secrets.PROXY_HOST_8 }}
+            PROXY_HOST_9=${{ secrets.PROXY_HOST_9 }}
+            PROXY_HOST_10=${{ secrets.PROXY_HOST_10 }}
+            PROXY_HOST_11=${{ secrets.PROXY_HOST_11 }}
+            PROXY_HOST_12=${{ secrets.PROXY_HOST_12 }}
+            PROXY_PORT=${{ secrets.PROXY_PORT }}
+            EOF
 
             # =========================
             # 파일 직접 실행
