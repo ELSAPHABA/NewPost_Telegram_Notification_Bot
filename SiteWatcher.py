@@ -34,7 +34,6 @@ class SiteWatcher:
                 response.raise_for_status()
                 break
             except requests.RequestException:
-                proxy_manager.rotate_now()
                 if attempt == proxy_manager.request_attempts() - 1:
                     raise
 
