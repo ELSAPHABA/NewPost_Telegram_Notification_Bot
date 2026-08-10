@@ -10,7 +10,6 @@ ENV_KEYS = [
     "USER_AGENT_ROTATE_INTERVAL",
     "WATCHER_WORKER_COUNT",
     "PROXY_ENABLED",
-    "PROXY_SCHEME",
     "PROXY_USER",
     "PROXY_PASS",
     "PROXY_PORT",
@@ -46,22 +45,29 @@ def main():
         {
             "TELEGRAM_BOT_TOKEN": "token",
             "PROXY_ENABLED": "true",
-            "PROXY_SCHEME": "http",
             "PROXY_USER": "user@example.com",
             "PROXY_PASS": "p/a:ss",
-            "PROXY_HOST_1": "https://proxy1.example.com:1234/path",
+            "PROXY_HOST_1": "http://proxy1.example.com",
             "PROXY_HOST_2": "proxy2.example.com",
             "PROXY_PORT": "8080",
         }
     ):
-        proxy_manager = get_proxy_manager()
-        proxies = proxy_manager.requests_proxies()
+        proxies = get_proxy_manager().requests_proxies()
         assert proxies["http"] == proxies["https"]
-        assert proxies["http"] == "https://user%40example.com:p%2Fa%3Ass@proxy1.example.com:1234"
-        before = proxies["http"]
-        second = proxy_manager.requests_proxies()["http"]
-        assert second == "http://user%40example.com:p%2Fa%3Ass@proxy2.example.com:8080"
-        assert second != before
+        assert proxies["http"].startswith("http://user%40example.com:p%2Fa%3Ass@")
+        assert proxies["http"].endswith(":8080")
+
+    with env(
+        {
+            "TELEGRAM_BOT_TOKEN": "token",
+            "PROXY_ENABLED": "true",
+            "PROXY_USER": "user",
+            "PROXY_PASS": "pass",
+            "PROXY_HOST_1": "nl.socks.example.net",
+            "PROXY_PORT": "1080",
+        }
+    ):
+        assert get_proxy_manager().requests_proxies()["http"] == "socks5h://user:pass@nl.socks.example.net:1080"
 
 
 if __name__ == "__main__":

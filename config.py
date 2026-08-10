@@ -1,9 +1,8 @@
 import os
-import threading
 import time
 from dataclasses import dataclass
 from functools import lru_cache
-from urllib.parse import quote, urlsplit
+from urllib.parse import quote
 
 
 TRUE_VALUES = {"1", "true", "yes", "on"}
@@ -48,7 +47,6 @@ class Settings:
     proxy_enabled: bool
     proxy_user: str
     proxy_pass: str
-    proxy_scheme: str
     proxy_hosts: tuple[str, ...]
     proxy_port: str
     proxy_rotate_seconds: int
@@ -61,8 +59,6 @@ class Settings:
             return self
 
         missing = []
-        if self.proxy_scheme not in {"http", "https"}:
-            missing.append("PROXY_SCHEME(http|https)")
         if not self.proxy_user:
             missing.append("PROXY_USER")
         if not self.proxy_pass:
@@ -83,40 +79,24 @@ class Settings:
 class ProxyManager:
     def __init__(self, settings):
         self.settings = settings
-        self._offset = 0
-        self._lock = threading.Lock()
 
     def requests_proxies(self):
         if not self.settings.proxy_enabled:
             return None
 
-        proxy_url = self._proxy_url(self._next_host())
-        return {"http": proxy_url, "https": proxy_url}
-
-    def _proxy_url(self, raw_host):
-        parsed = urlsplit(raw_host if "://" in raw_host else f"{self.settings.proxy_scheme}://{raw_host}")
-        scheme = parsed.scheme or self.settings.proxy_scheme
-        host = parsed.hostname or raw_host.split("/", 1)[0].rsplit(":", 1)[0]
-        port = parsed.port or self.settings.proxy_port
+        host = self.settings.proxy_hosts[self._host_index()]
         user = quote(self.settings.proxy_user, safe="")
         password = quote(self.settings.proxy_pass, safe="")
-        return f"{scheme}://{user}:{password}@{host}:{port}"
-
-    def _next_host(self):
-        with self._lock:
-            host = self.settings.proxy_hosts[
-                (self._host_index() + self._offset) % len(self.settings.proxy_hosts)
-            ]
-            self._offset = (self._offset + 1) % len(self.settings.proxy_hosts)
-            return host
-
-    def request_attempts(self):
-        if not self.settings.proxy_enabled:
-            return 1
-        return min(3, len(self.settings.proxy_hosts))
+        proxy_url = f"{self._proxy_scheme()}://{user}:{password}@{host}:{self.settings.proxy_port}"
+        return {"http": proxy_url, "https": proxy_url}
 
     def _host_index(self):
         return int(time.monotonic() // self.settings.proxy_rotate_seconds) % len(self.settings.proxy_hosts)
+
+    def _proxy_scheme(self):
+        if self.settings.proxy_port == "1080" or any(".socks." in host for host in self.settings.proxy_hosts):
+            return "socks5h"
+        return "http"
 
 
 def _proxy_hosts():
@@ -129,12 +109,9 @@ def _proxy_hosts():
 
 
 def _clean_host(host):
-    parsed = urlsplit(host if "://" in host else f"//{host}")
-    hostname = parsed.hostname or host.split("/", 1)[0].rsplit(":", 1)[0]
-    port = f":{parsed.port}" if parsed.port else ""
-    if parsed.scheme:
-        return f"{parsed.scheme}://{hostname}{port}"
-    return f"{hostname}{port}"
+    if "://" in host:
+        host = host.split("://", 1)[1]
+    return host.split("/", 1)[0]
 
 
 @lru_cache
@@ -148,7 +125,6 @@ def get_settings():
         proxy_enabled=_env_bool("PROXY_ENABLED", False),
         proxy_user=os.getenv("PROXY_USER", ""),
         proxy_pass=os.getenv("PROXY_PASS", ""),
-        proxy_scheme=os.getenv("PROXY_SCHEME", "http").strip().lower() or "http",
         proxy_hosts=_proxy_hosts(),
         proxy_port=os.getenv("PROXY_PORT", "").strip(),
         proxy_rotate_seconds=_env_int("PROXY_ROTATE_SECONDS", 1800),

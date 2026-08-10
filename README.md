@@ -52,7 +52,7 @@ Python 의존성은 `pyproject.toml`에 정의되어 있습니다.
 ```text
 python-telegram-bot[job-queue]
 beautifulsoup4
-requests
+requests[socks]
 python-dotenv
 ```
 
@@ -66,7 +66,6 @@ python-dotenv
 | `USER_AGENT_ROTATE_INTERVAL` | `20` | watcher 확인 횟수 기준 User-Agent 변경 주기 |
 | `WATCHER_WORKER_COUNT` | `3` | 동시에 실행할 watcher 수 |
 | `PROXY_ENABLED` | `false` | proxy 사용 여부 |
-| `PROXY_SCHEME` | `http` | proxy 접속 scheme, `http` 또는 `https` |
 | `PROXY_USER` | 없음 | proxy 계정 |
 | `PROXY_PASS` | 없음 | proxy 비밀번호 |
 | `PROXY_HOST_1` ~ `PROXY_HOST_12` | 없음 | proxy host 목록 |
@@ -84,7 +83,6 @@ USER_AGENT_ROTATE_INTERVAL=20
 WATCHER_WORKER_COUNT=3
 
 PROXY_ENABLED=false
-PROXY_SCHEME=http
 PROXY_USER=
 PROXY_PASS=
 PROXY_HOST_1=
@@ -96,7 +94,6 @@ proxy를 켜려면 다음처럼 설정합니다.
 
 ```env
 PROXY_ENABLED=true
-PROXY_SCHEME=http
 PROXY_USER=proxy-user
 PROXY_PASS=proxy-password
 PROXY_HOST_1=proxy1.example.com
@@ -219,7 +216,6 @@ proxy 사용 여부는 repository variable로 제어할 수 있습니다.
 
 ```text
 PROXY_ENABLED=false
-PROXY_SCHEME=http
 ```
 
 workflow에는 기본값이 `true`로 되어 있으므로, proxy secrets를 등록하지 않은 상태라면 `PROXY_ENABLED=false`를 설정해야 합니다.

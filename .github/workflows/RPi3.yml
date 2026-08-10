@@ -41,7 +41,6 @@ jobs:
             cat > .env <<'EOF'
             TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
             PROXY_ENABLED=${{ vars.PROXY_ENABLED || 'true' }}
-            PROXY_SCHEME=${{ vars.PROXY_SCHEME || 'http' }}
             PROXY_USER=${{ secrets.PROXY_USER }}
             PROXY_PASS=${{ secrets.PROXY_PASS }}
             PROXY_HOST_1=${{ secrets.PROXY_HOST_1 }}

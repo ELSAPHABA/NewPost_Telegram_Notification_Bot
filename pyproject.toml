@@ -22,7 +22,7 @@ classifiers = [
 dependencies = [
     "python-telegram-bot[job-queue]>=22.7",
     "beautifulsoup4>=4.14.3",
-    "requests>=2.33.0",
+    "requests[socks]>=2.33.0",
     "python-dotenv>=1.2.2",
 ]
 

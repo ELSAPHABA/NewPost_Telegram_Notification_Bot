@@ -19,24 +19,20 @@ class SiteWatcher:
 
     def fetch_response(self, headers=None, timeout=None):
         headers = headers or {'User-Agent': 'Mozilla/5.0'}
-        base_timeout = timeout or self.request_timeout
+        request_timeout = timeout or self.request_timeout
+        if self._scrape_deadline is not None:
+            remaining = self._scrape_deadline - time.monotonic()
+            if remaining <= 0:
+                raise TimeoutError(f"{self.name}: 스크래핑 제한 시간을 초과했습니다.")
+            request_timeout = min(request_timeout, remaining)
 
-        proxy_manager = get_proxy_manager()
-        for attempt in range(proxy_manager.request_attempts()):
-            try:
-                request_timeout = self._request_timeout(base_timeout)
-                response = requests.get(
-                    self.url,
-                    headers=headers,
-                    timeout=request_timeout,
-                    proxies=proxy_manager.requests_proxies(),
-                )
-                response.raise_for_status()
-                break
-            except requests.RequestException:
-                if attempt == proxy_manager.request_attempts() - 1:
-                    raise
-
+        response = requests.get(
+            self.url,
+            headers=headers,
+            timeout=request_timeout,
+            proxies=get_proxy_manager().requests_proxies(),
+        )
+        response.raise_for_status()
         if self.source_load_delay > 0:
             delay = self.source_load_delay
             if self._scrape_deadline is not None:
@@ -46,15 +42,6 @@ class SiteWatcher:
                 delay = min(delay, remaining)
             time.sleep(delay)
         return response
-
-    def _request_timeout(self, timeout):
-        if self._scrape_deadline is None:
-            return timeout
-
-        remaining = self._scrape_deadline - time.monotonic()
-        if remaining <= 0:
-            raise TimeoutError(f"{self.name}: 스크래핑 제한 시간을 초과했습니다.")
-        return min(timeout, remaining)
 
     def fetch_page(self, headers=None):
         response = self.fetch_response(headers=headers)
