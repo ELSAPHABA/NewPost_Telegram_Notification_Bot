@@ -1,8 +1,9 @@
 import os
+import threading
 import time
 from dataclasses import dataclass
 from functools import lru_cache
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit
 
 
 TRUE_VALUES = {"1", "true", "yes", "on"}
@@ -79,16 +80,30 @@ class Settings:
 class ProxyManager:
     def __init__(self, settings):
         self.settings = settings
+        self._offset = 0
+        self._lock = threading.Lock()
 
     def requests_proxies(self):
         if not self.settings.proxy_enabled:
             return None
 
-        host = self.settings.proxy_hosts[self._host_index()]
+        host = self.settings.proxy_hosts[
+            (self._host_index() + self._offset) % len(self.settings.proxy_hosts)
+        ]
         user = quote(self.settings.proxy_user, safe="")
         password = quote(self.settings.proxy_pass, safe="")
         proxy_url = f"http://{user}:{password}@{host}:{self.settings.proxy_port}"
         return {"http": proxy_url, "https": proxy_url}
+
+    def request_attempts(self):
+        if not self.settings.proxy_enabled:
+            return 1
+        return min(3, len(self.settings.proxy_hosts))
+
+    def rotate_now(self):
+        if self.settings.proxy_enabled and len(self.settings.proxy_hosts) > 1:
+            with self._lock:
+                self._offset = (self._offset + 1) % len(self.settings.proxy_hosts)
 
     def _host_index(self):
         return int(time.monotonic() // self.settings.proxy_rotate_seconds) % len(self.settings.proxy_hosts)
@@ -104,9 +119,8 @@ def _proxy_hosts():
 
 
 def _clean_host(host):
-    if "://" in host:
-        host = host.split("://", 1)[1]
-    return host.split("/", 1)[0]
+    parsed = urlsplit(host if "://" in host else f"http://{host}")
+    return parsed.hostname or host.split("/", 1)[0].rsplit(":", 1)[0]
 
 
 @lru_cache

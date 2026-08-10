@@ -47,15 +47,19 @@ def main():
             "PROXY_ENABLED": "true",
             "PROXY_USER": "user@example.com",
             "PROXY_PASS": "p/a:ss",
-            "PROXY_HOST_1": "http://proxy1.example.com",
+            "PROXY_HOST_1": "http://proxy1.example.com:1234/path",
             "PROXY_HOST_2": "proxy2.example.com",
             "PROXY_PORT": "8080",
         }
     ):
-        proxies = get_proxy_manager().requests_proxies()
+        proxy_manager = get_proxy_manager()
+        proxies = proxy_manager.requests_proxies()
         assert proxies["http"] == proxies["https"]
         assert proxies["http"].startswith("http://user%40example.com:p%2Fa%3Ass@")
         assert proxies["http"].endswith(":8080")
+        before = proxies["http"]
+        proxy_manager.rotate_now()
+        assert proxy_manager.requests_proxies()["http"] != before
 
 
 if __name__ == "__main__":
