@@ -13,7 +13,7 @@ class SiteWatcher:
         self.interval = 30
         self.source_load_delay = 1
         self.request_timeout = 5
-        self.scrape_retry_timeout = 10
+        self.scrape_retry_timeout = 20
         self.scrape_retry_delay = 1
         self._scrape_deadline = None
 
@@ -72,7 +72,7 @@ class SiteWatcher:
             self._scrape_deadline = previous_deadline
 
         if post_id is None:
-            raise TimeoutError(f"{self.name}: 10초 내 스크래핑에 실패했습니다.") from last_error
+            raise TimeoutError(f"{self.name}: {self.scrape_retry_timeout}초 내 스크래핑에 실패했습니다.") from last_error
 
         if self.last_post_id != post_id:
             self.last_post_id = post_id
