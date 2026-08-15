@@ -13,7 +13,7 @@ class SiteWatcher:
         self.interval = 30
         self.source_load_delay = 1
         self.request_timeout = 5
-        self.scrape_retry_timeout = 20
+        self.scrape_retry_timeout = 30
         self.scrape_retry_delay = 1
         self._scrape_deadline = None
 
