@@ -94,7 +94,11 @@ class WatcherManager:
 
         for watcher, check_result, error in results:
             if error:
-                logging.error(f"{watcher.name} 크롤링 에러: {error}")
+                cause = getattr(error, '__cause__', None)
+                if cause:
+                    logging.error(f"{watcher.name} 크롤링 에러: {error} (원인: {type(cause).__name__}: {cause})")
+                else:
+                    logging.error(f"{watcher.name} 크롤링 에러: {error}")
                 continue
 
             try:
@@ -116,7 +120,7 @@ class WatcherManager:
                         self.chat_id_manager.remove_id(chat_id)
 
             except Exception as e:
-                logging.error(f"{watcher.name} 크롤링 에러: {e}")
+                logging.error(f"{watcher.name} 메시지 처리 에러: {e}")
 
     async def set_interval(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:

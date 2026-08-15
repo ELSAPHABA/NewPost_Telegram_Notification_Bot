@@ -5,6 +5,20 @@ import time
 
 from config import get_proxy_manager
 
+DEFAULT_HEADERS = {
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+    'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+    'Sec-Ch-Ua': '"Chromium";v="130", "Google Chrome";v="130", "Not?A_Brand";v="99"',
+    'Sec-Ch-Ua-Mobile': '?0',
+    'Sec-Ch-Ua-Platform': '"Windows"',
+    'Sec-Fetch-Dest': 'document',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-Site': 'none',
+    'Sec-Fetch-User': '?1',
+    'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
+}
+
 class SiteWatcher:
     def __init__(self):
         self.name = None
@@ -18,7 +32,9 @@ class SiteWatcher:
         self._scrape_deadline = None
 
     def fetch_response(self, headers=None, timeout=None):
-        headers = headers or {'User-Agent': 'Mozilla/5.0'}
+        request_headers = DEFAULT_HEADERS.copy()
+        if headers:
+            request_headers.update(headers)
         request_timeout = timeout or self.request_timeout
         if self._scrape_deadline is not None:
             remaining = self._scrape_deadline - time.monotonic()
@@ -28,7 +44,7 @@ class SiteWatcher:
 
         response = requests.get(
             self.url,
-            headers=headers,
+            headers=request_headers,
             timeout=request_timeout,
             proxies=get_proxy_manager().requests_proxies(),
         )
