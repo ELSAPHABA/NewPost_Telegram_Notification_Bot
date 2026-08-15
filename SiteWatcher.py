@@ -1,5 +1,6 @@
 # SiteWatcher.py
 
+import logging
 import requests
 import time
 
@@ -13,7 +14,7 @@ DEFAULT_HEADERS = {
     'Sec-Ch-Ua-Platform': '"Windows"',
     'Sec-Fetch-Dest': 'document',
     'Sec-Fetch-Mode': 'navigate',
-    'Sec-Fetch-Site': 'none',
+    'Sec-Fetch-Site': 'same-origin',
     'Sec-Fetch-User': '?1',
     'Upgrade-Insecure-Requests': '1',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
@@ -33,6 +34,8 @@ class SiteWatcher:
 
     def fetch_response(self, headers=None, timeout=None):
         request_headers = DEFAULT_HEADERS.copy()
+        if self.url:
+            request_headers['Referer'] = self.url
         if headers:
             request_headers.update(headers)
         request_timeout = timeout or self.request_timeout
@@ -80,6 +83,7 @@ class SiteWatcher:
                     break
                 except Exception as e:
                     last_error = e
+                    logging.warning(f"[{self.name}] 스크래핑 시도 실패: {type(e).__name__}: {e}")
                     remaining = deadline - time.monotonic()
                     if remaining <= 0:
                         break
@@ -88,7 +92,8 @@ class SiteWatcher:
             self._scrape_deadline = previous_deadline
 
         if post_id is None:
-            raise TimeoutError(f"{self.name}: {self.scrape_retry_timeout}초 내 스크래핑에 실패했습니다.") from last_error
+            cause_str = f" (원인: {type(last_error).__name__}: {last_error})" if last_error else ""
+            raise TimeoutError(f"{self.name}: {self.scrape_retry_timeout}초 내 스크래핑에 실패했습니다.{cause_str}") from last_error
 
         if self.last_post_id != post_id:
             self.last_post_id = post_id
