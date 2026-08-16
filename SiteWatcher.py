@@ -95,6 +95,9 @@ class SiteWatcher:
             cause_str = f" (원인: {type(last_error).__name__}: {last_error})" if last_error else ""
             raise TimeoutError(f"{self.name}: {self.scrape_retry_timeout}초 내 스크래핑에 실패했습니다.{cause_str}") from last_error
 
+        return self.process_scraped_post(post_id, title, link)
+
+    def process_scraped_post(self, post_id, title, link):
         if self.last_post_id != post_id:
             self.last_post_id = post_id
             return title, link

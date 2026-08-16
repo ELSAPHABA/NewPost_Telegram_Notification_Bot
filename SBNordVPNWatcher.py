@@ -35,8 +35,7 @@ class SBNordVPNWatcher(SiteWatcher):
         post_id = int(cashback_percent * 100)
         return post_id, cashback_text, self.url
 
-    def check_new_post_with_headers(self, headers):
-        post_id, title, link = self.get_latest_post(headers=headers)
+    def process_scraped_post(self, post_id, title, link):
         cashback_percent = Decimal(post_id) / 100
         condition_met = cashback_percent >= self.ALERT_THRESHOLD
 

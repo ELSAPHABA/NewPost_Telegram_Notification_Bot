@@ -30,7 +30,7 @@ class TwoCPUWatcher(SiteWatcher):
 
         table = soup.select_one('#list_ha table')
         if not table:
-            raise Exception('2CPU: table을 찾지 못했습니다.')
+            raise Exception('2CPU: table을 찾을 수 없습니다.')
 
         # tbody가 없어도 되도록
         trs = table.find_all('tr', recursive=False)
@@ -59,7 +59,7 @@ class TwoCPUWatcher(SiteWatcher):
         title_td = latest_post_tr.find_all('td', class_='hidden-xs')[1]
         title_element = title_td.find('a')
         title = title_element.get_text(strip=True)
-        link = urljoin(self.url, title_element.get('href'))  # <-- 여기!
+        link = urljoin(self.url, title_element.get('href'))
 
         return post_id, title, link
 

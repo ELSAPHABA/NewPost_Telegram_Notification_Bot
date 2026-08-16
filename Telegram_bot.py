@@ -95,7 +95,7 @@ class WatcherManager:
         for watcher, check_result, error in results:
             if error:
                 cause = getattr(error, '__cause__', None)
-                if cause:
+                if cause and str(cause) not in str(error):
                     logging.error(f"{watcher.name} 크롤링 에러: {error} (원인: {type(cause).__name__}: {cause})")
                 else:
                     logging.error(f"{watcher.name} 크롤링 에러: {error}")

@@ -27,8 +27,7 @@ class SSAdguardWatcher(SiteWatcher):
         post_id = int(price * 100)
         return post_id, price_text, self.url
 
-    def check_new_post_with_headers(self, headers):
-        post_id, title, link = self.get_latest_post(headers=headers)
+    def process_scraped_post(self, post_id, title, link):
         price = Decimal(post_id) / 100
         condition_met = price < self.ALERT_THRESHOLD
 
