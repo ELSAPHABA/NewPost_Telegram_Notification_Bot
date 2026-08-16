@@ -61,6 +61,7 @@ python-dotenv
 | 이름 | 기본값 | 설명 |
 | --- | --- | --- |
 | `TELEGRAM_BOT_TOKEN` | 없음 | 필수. Telegram Bot Token |
+| `TZ` | `UTC` | 컨테이너 및 봇 기준 시간대 (예: `Asia/Seoul`, `UTC`) |
 | `CHAT_IDS_FILE` | `chat_ids.json` | chat id 저장 파일 경로 |
 | `USER_AGENTS_FILE` | `user-agents.txt` | User-Agent 목록 파일 경로 |
 | `USER_AGENT_ROTATE_INTERVAL` | `20` | watcher 확인 횟수 기준 User-Agent 변경 주기 |
@@ -78,6 +79,7 @@ Boolean 값은 `1`, `true`, `yes`, `on`, `0`, `false`, `no`, `off`를 사용할 
 
 ```env
 TELEGRAM_BOT_TOKEN=123456789:replace_me
+TZ=UTC
 
 USER_AGENT_ROTATE_INTERVAL=20
 WATCHER_WORKER_COUNT=3
@@ -193,6 +195,7 @@ RPI3_SSH_PRIVATE_KEY
 
 ```text
 TELEGRAM_BOT_TOKEN
+TZ
 PROXY_USER
 PROXY_PASS
 PROXY_HOST_1
@@ -212,10 +215,11 @@ PROXY_PORT
 
 ### GitHub Variables
 
-proxy 사용 여부는 repository variable로 제어할 수 있습니다.
+proxy 사용 여부 및 시간대는 repository variable로 제어할 수 있습니다.
 
 ```text
 PROXY_ENABLED=false
+TZ=UTC
 ```
 
 workflow에는 기본값이 `true`로 되어 있으므로, proxy secrets를 등록하지 않은 상태라면 `PROXY_ENABLED=false`를 설정해야 합니다.
@@ -239,13 +243,7 @@ workflow에는 기본값이 `true`로 되어 있으므로, proxy secrets를 등�
 문법 확인:
 
 ```bash
-python -m py_compile config.py main.py SiteWatcher.py Telegram_bot.py test_config.py
-```
-
-설정 파싱 self-check:
-
-```bash
-python test_config.py
+python -m py_compile config.py main.py SiteWatcher.py Telegram_bot.py
 ```
 
 ## 주요 파일
@@ -260,7 +258,6 @@ python test_config.py
 | `user_agents.py` | User-Agent 파일 로드 및 로테이션 |
 | `Dockerfile` | Docker 이미지 정의 |
 | `docker-entrypoint.sh` | `/data/chat_ids.json` 초기화 |
-| `test_config.py` | 설정 및 proxy URL 생성 self-check |
 
 ## 운영 메모
 

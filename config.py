@@ -50,6 +50,7 @@ class Settings:
     proxy_hosts: tuple[str, ...]
     proxy_port: str
     proxy_rotate_seconds: int
+    tz: str = "UTC"
 
     def validate(self):
         if not self.telegram_bot_token:
@@ -128,6 +129,7 @@ def get_settings():
         proxy_hosts=_proxy_hosts(),
         proxy_port=os.getenv("PROXY_PORT", "").strip(),
         proxy_rotate_seconds=_env_int("PROXY_ROTATE_SECONDS", 1800),
+        tz=os.getenv("TZ", "UTC").strip() or "UTC",
     ).validate()
 
 

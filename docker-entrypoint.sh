@@ -1,10 +1,11 @@
 #!/bin/sh
 set -eu
 
+: "${TZ:=UTC}"
 : "${DATA_DIR:=/data}"
 : "${CHAT_IDS_FILE:=${DATA_DIR}/chat_ids.json}"
 
-export DATA_DIR CHAT_IDS_FILE
+export TZ DATA_DIR CHAT_IDS_FILE
 
 mkdir -p "$DATA_DIR" "$(dirname "$CHAT_IDS_FILE")"
 

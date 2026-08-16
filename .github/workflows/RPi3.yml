@@ -39,6 +39,7 @@ jobs:
 
             # .env 파일 생성 (토큰 및 프록시 설정 주입)
             cat > .env <<'EOF'
+            TZ=${{ secrets.TZ || vars.TZ || 'UTC' }}
             TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
             PROXY_ENABLED=${{ vars.PROXY_ENABLED }}
             PROXY_USER=${{ secrets.PROXY_USER }}
